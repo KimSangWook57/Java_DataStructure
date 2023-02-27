@@ -102,12 +102,13 @@ class LinkedList {
 
 	public boolean Search(int data) { // 전체 리스트를 순서대로 출력한다.
 		// 데이터가 있으면 true.
-		Node p = first, q = null;
-		if (p.data == data) {
-			return true;
-		} else {
-			q = p;
-			p = p.link;
+		Node p = first;
+		while(p != null) {
+			if (p.data == data) {
+				return true;
+			} else {
+				p = p.link;
+			}
 		}
 		// 없으면 false.
 		return false;

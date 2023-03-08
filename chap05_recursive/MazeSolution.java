@@ -1,119 +1,86 @@
 package chap05_recursive;
 
-public class MazeSolution {
+import java.util.Stack;
+
+class items {
+	int x;
+	int y;
+	int dir;
+
+	public items(int a, int b, int c) {
+		x = a;
+		y = b;
+		dir = c;
+	}
+}
+
+// 방향을 정하는 클래스.
+// {N, NE, E, SE, S, SW, W, NW};
+// {0, 1, 2, 3, 4, 5, 6, 7}
+
+class offsets {
 	
-	static void solveMaze(int[][] input, int m, int p) {
-		// 스택 객체 생성.
-		MazeStack s = new MazeStack(100);
-		
-		// 미로 생성.
-		int maze[][] = new int[m + 2][p + 2];
-		int mark[][] = new int[m + 2][p + 2];
-		
-		// 미로 초기화 코드.
-		for (int i = 0; i < m + 2; i++) {
-			for (int j = 0; j < p + 2; j++) {
-				// 미로 바깥쪽은 1로 초기화.
-				if ((i == 0) || (j == 0) || (i == m + 1) || (j == p + 1)) {
-					maze[i][j] = 1;
-					mark[i][j] = 1;
-				}
-				// 미리 설정된 값으로 미로 생성.
-				// 추적 코드 0으로 초기화.
-				else {
-					maze[i][j] = input[i - 1][j - 1];
-					mark[i][j] = 0;
-				};
-				
-			}
-			
-		}
-		
-		// moves의 방향을 선언.
-		int[][] moves = {
-				{0,1},  	//E(0)
-				{1,1},  	//SE(1)
-				{1,0},  	//S(2)
-				{1,-1}, 	//SW(3)
-				{0,-1}, 	//W(4)
-				{-1,-1}, 	//NW(5)
-				{-1,0}, 	//N(6)
-				{-1,1}, 	//NE(7)
-		};
-		
-		// 시작점 (1,1)을 표시, 지나온 길 확인용(백트래킹)
+	int a, b;
+}
+
+public class MazeSolution {
+	// 전역 변수 선언.
+	static int row = 12;
+	static int col = 15;
+	
+	static offsets[] moves = new offsets[8];
+	static int maze[][] = new int[row + 2][col + 2];
+	static int mark[][] = new int[row + 2][col + 2];
+	
+	static void solveMaze(int m, int p) {
+	// row = m, col = p
+	// 시작점 (1,1)을 표시.
 		mark[1][1] = 1;
-		// 시작점 확인. (출력시)
-		maze[0][0] = 1;
-		// 정답이 나올때까지 루프를 돌기 위한 조건.
-		boolean check = false;
-		// 스택과 포인터 생성.
-		MazeStack stack = new MazeStack(1000);
-		MazePoint p1 = new MazePoint (1, 1, 0); // 0 == E
-		stack.push(p1);
+		Stack<items> stack = new Stack<items>();
+		items temp = new items(0, 0, 0);
+		temp.x = 1; 
+		temp.y = 1; 
+		temp.dir = 2; // 2 == E
+		stack.push(temp);
 		
 		// check 코드 추가.
-		// 스택이 비어 있지 않고, 아직 나오지 못했다면...
-		while (!stack.isEmpty() && !check) { 
-			// 임시 스택 설정.
-			p1 = stack.pop(); 
-			// 임시 스택의 값을 가져오는 임시 포인터 설정.
-			int i = p1.getX();
-			int j = p1.getY();
-			int d = p1.getDir();
-			// 방향 체크를 위한 루프 코드.
-			while (d < 8) { 
-				
-				int g = i + moves[d][0];
-				int h = j + moves[d][1];
-				// System.out.println("i = " + i + ", j = " + j);
-				// System.out.println("g = " + g + ", h = " + h);
-				
-				// 갈 수 있는 길이고, 아직 가보지 않았다면...
-				if ((maze[g][h] == 0) && (mark[g][h] != 1)) { 
-					// 새로운 곳으로 이동을 위해 현재 위치에 왔었음을 표시.
-					mark[g][h] = 1;
-					// 또한 현재 위치에서 방향을 체크한다.
-					p1 = new MazePoint (i, j, d);
-					stack.push(p1);
-					// 표시를 출력할 코드.
-					maze[i][j] = 2;
-					// moves to (g,h), 0 == E
-					i = g; 
-					j = h; 
-					d = 0; 
-				}
-				// 갈 수 없거나, 갈 수 있더라도 이미 갔던 길이라면 다음 방향 체크.
-				else d++;
-				
-				// 출구에 도착하면, 경로를 출력한다.
-				if ((i== m) && (j == p)) { 
-					p1 = new MazePoint (i, j, d);
-					s.push(p1);
-					// 도착점 표시.
-					maze[i][j] = 3;
-					check = true;
-	
-				}
-			}
-		}
-	
-		// 답을 찾았다면, 정답을 출력하는 코드.
-		if(check) {
-			System.out.println("미로 문제 해결 완료.");
-			System.out.println("■ 경로 시도를 거쳐 ▲에 도착했습니다.");
-			System.out.println();
-			for(int i=1; i<13; i++) {
-				for(int j=1; j <16; j++) {
-					if (maze[i][j] == 3) 		System.out.print("▲");
-					else if (maze[i][j] == 2) 	System.out.print("■");
-					else 						System.out.print(maze[i][j]);
-				}
-				System.out.println();
-			}
+		while (!stack.isEmpty()) { // stack not empty...
 			
-		} 
-		else System.out.println("탈출 경로를 찾지 못했습니다.");
+			temp = stack.pop(); // unstack
+			int i = temp.x;
+			int j = temp.y;
+			int d = temp.dir;
+			// pop 횟수를 세는 코드.
+			System.out.println();
+			
+			while (d < 8) { // 방향 루프
+				
+				int g = i + moves[d].a;
+				int h = j + moves[d].b;
+				System.out.println("i = " + i + ", j = " + j);
+				System.out.println("g = " + g + ", h = " + h);
+				if ((g == m) && (h == p)) { // reached exit
+											// output solveMaze
+					System.out.println(stack);
+					System.out.println("the term near the exit: " + i + " " + j);
+					System.out.println("exit: " + m + " " + p);
+					return;	
+				}
+				if ((maze[g][h] == 0) && (mark[g][h] == 0)) { // new position
+					mark[g][h] = 1;
+					// push the old temp to the stack, but the direction changes.
+					// Because the neighbor in the direction of d has been checked.
+					temp.x = i;  
+					temp.y = j; 
+					temp.dir = d + 1;
+					stack.push(temp); // stack it
+					i = g; j = h; d = 0; // moves to (g,h), 0 == N
+				}
+				else d++; // 다음 방향 체크.
+			}
+			// 여기에 mark 위치 초기화?
+		}
+		System.out.println("no solveMaze in maze ");
 	}
 
 	public static void main(String[] args) {
@@ -133,10 +100,42 @@ public class MazeSolution {
 			{ 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0 },
 			{ 0, 1, 0, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0 },
 		};
+		// moves의 방향을 선언.
+		for(int i = 0; i < 8; i++) {
+			moves[i] = new offsets();
+		}
 		
-		// 해결 알고리즘 실행.
-		solveMaze(input, 12, 15);
+		moves[0].a = -1; 	moves[0].b = 0;
+		moves[1].a = -1; 	moves[1].b = 1;
+		moves[2].a = 0; 	moves[2].b = 1;
+		moves[3].a = 1; 	moves[3].b = 1;
+		moves[4].a = 1; 	moves[4].b = 0;
+		moves[5].a = 1; 	moves[5].b = -1;
+		moves[6].a = 0; 	moves[6].b = -1;
+		moves[7].a = -1; 	moves[7].b = -1;
+
+		// 미로 초기화 코드.
+		for (int i = 0; i < row + 2; i++) {
+			for (int j = 0; j < col + 2; j++) {
+				// 미로 바깥쪽은 1로 초기화.
+				if ((i == 0) || (j == 0) || (i == row +1) || (j == col +1))
+					maze[i][j] = 1;
+				// 미리 설정된 값으로 미로 생성.
+				else {
+					maze[i][j] = input[i - 1][j - 1];
+				};
+				// 추적 코드 0으로 초기화.
+				mark[i][j] = 0;
+			}
+		}
+		// 미로를 찍는 코드.
+		for (int i = 0; i <= row + 1; i++) {
+			for (int j = 0; j <= col + 1; j++)
+				System.out.print(maze[i][j] + " ");
+			System.out.println();
+		}
+		
+		solveMaze(row, col);
 
 	}
-	
 }

@@ -12,6 +12,7 @@ class TreeNode {
 	public TreeNode() {
 		LeftChild = RightChild = null;
 	}
+
 	public TreeNode(int data) {
 		this.data = data;
 		LeftChild = RightChild = null;
@@ -24,6 +25,7 @@ class Tree {
 	Tree() {
 		root = null;
 	}
+
 	// 왼쪽과 오른쪽 중 왼쪽을 먼저 방문한다.
 	// 찾아낸 temp값은 current 값이 삭제되었을 때 대체할 값이다.
 	TreeNode inorderSucc(TreeNode current) {
@@ -33,6 +35,7 @@ class Tree {
 				temp = temp.LeftChild;
 		return temp;
 	}
+
 	// 단말노드에 도착했는지 확인.
 	boolean isLeafNode(TreeNode current) {
 		if (current.LeftChild == null && current.RightChild == null)
@@ -40,6 +43,7 @@ class Tree {
 		else
 			return false;
 	}
+
 	// 메인에서 쓸 inorder() 기능.
 	void inorder() {
 		inorder(root);
@@ -52,6 +56,7 @@ class Tree {
 	void postorder() {
 		postorder(root);
 	}
+
 	// CurrentNode == root
 	// 이 함수는 안에서만 처리한다.
 	private void inorder(TreeNode CurrentNode) {
@@ -62,6 +67,7 @@ class Tree {
 			inorder(CurrentNode.RightChild);
 		}
 	}
+
 	// pre 표기.
 	private void preorder(TreeNode CurrentNode) {
 		if (CurrentNode != null) {
@@ -70,6 +76,7 @@ class Tree {
 			preorder(CurrentNode.RightChild);
 		}
 	}
+
 	// post 표기
 	private void postorder(TreeNode CurrentNode) {
 		if (CurrentNode != null) {
@@ -79,21 +86,33 @@ class Tree {
 		}
 	}
 
-	boolean insert(int x) {// binary search tree를 만드는 입력 => A + B * C을 tree로 만드는 방법: 입력 해결하는 알고리즘 작성 방법을
-							// 설계하여 구현
+	boolean insert(int x) { // binary search tree를 만드는 입력 => A + B * C을 tree로 만드는 방법:
+							// 입력 해결하는 알고리즘 작성 방법을 설계하여 구현
 		TreeNode p = root;
 		TreeNode q = null;
-		
+
 		// p가 아무것도 없다면, 새로운 노드를 만든다.
-		if (p == null) root = new TreeNode(); 
+		if (p == null) {
+			// root에 내가 입력한 값을 넣을 것이다.
+			root = new TreeNode();
+			return true;
+		}
 		// p에 값이 있다면, 루프를 돈다.
 		while (p != null) {
 			// x가 더 작으면 왼쪽으로, 더 크다면 오른쪽으로, 같다면 추가하지 않는다.
-			if (x < p.data) 		p = p.LeftChild;
-			else if (x > p.data) 	p = p.RightChild;
-			else					return false;
+			if (x < p.data) {
+				q = p;
+				p = p.LeftChild;
+			}
+			else if (x > p.data) { 
+				q = p;
+				p = p.RightChild;
+			}
+			else return false;
 		}
-		
+		// 배열의 끝에 도달했다면, 끝 배열이 새 값을 가리키게 하고 루프를 끝내면 된다.
+		// q.data = x;
+		// 값을 넣었음을 알려준다.
 		return true;
 	}
 

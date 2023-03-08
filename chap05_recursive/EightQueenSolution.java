@@ -5,7 +5,7 @@ public class EightQueenSolution {
 	// 해결 알고리즘 파트.
 	public static void SolveQueen(int row, int col, int[][] data) {
 		// 배열의 시작 값을 0으로 설정.
-		IntPoint p = new IntPoint(0, 0);
+		Point p = new Point(0, 0);
 		// 값을 담을 스택.
 		MyStack s = new MyStack();
 		// 0 값을 x와 y에 넣어 준다.
@@ -18,7 +18,7 @@ public class EightQueenSolution {
 				if (CheckMove(data, x, y)) {
 					data[x][y] = 1;
 					// SetX, SetY 쓸 수 있을까?
-					s.Push(new IntPoint(x, y));
+					s.Push(new Point(x, y));
 					// 위치 저장 후 열 초기화.
 					y = 0;
 					// 다음 행 이동.
@@ -155,7 +155,19 @@ public class EightQueenSolution {
 		}
 		System.out.println();
 	}
-
+	
+//	// current row에 대한 다음 배치 가능한 모든 column을 조사하고 move[]에 1로 설정.
+//		void NextMove(int[][] move, int row) {
+//			// 배치가 가능할 때만 move[]에 1을 넣는다.
+//			for (int i = 0; i < 8; i++) {
+//				if (move[row][i] == 0) {
+//					move[row][i] = 1;
+//					return;
+//				}
+//			}
+//			return;
+//		}
+	
 	// 메인 페이지는 문제를 해결하는 코드만 남긴다.
 	public static void main(String[] args) {
 		int row = 8;
